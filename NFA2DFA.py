@@ -14,21 +14,30 @@ alfabeto = []
 for i in datos:
 
     if datos.index(i) > datos.index("Estados") and datos.index(i) < datos.index("Alfabeto"):
-        movements[i[-1]] = {}
-        estados.append(i)
+        if len(i) == 1:
+            movements[i] = {}
+            estados.append(i)
+        else:
+            if i[1] == ' ':
+                movements[i[2:]] = {}
+                estados.append(i)
+            else:
+                movements[i[1:]] = {} #Para casos donde el alfabeto sea del tipo q0,q1,q2 
+                estados.append(i)
 
     elif datos.index(i) > datos.index("Alfabeto") and datos.index(i) < datos.index("Transiciones"):
         alfabeto.append(i)
     
     elif datos.index(i) > datos.index("Transiciones"):
-        if i[2] not in movements[i[0]]:
-            movements[i[0]][i[2]] = [i[7]]
+        lista = i.split()
+        if lista[1] not in movements[lista[0]]:
+            movements[lista[0]][lista[1]] = [lista[3]]
         else:
-            movements[i[0]][i[2]].append(i[7])
+            movements[lista[0]][lista[1]].append(lista[3])
 
 print("Estados",estados)
 print("Alfabeto",alfabeto)
-print("Transiciones",movements)
+print("Transiciones",movements,"\n")
 
 
 
@@ -51,7 +60,6 @@ for i in new_movements:
         if movements[j]:
             for letter in alfabeto:
                 temp2 = movements[j][letter]
-                #print(i,letter,temp2)
                 for k in temp2:
                     if k not in new_movements[i][letter]:
                         new_movements[i][letter].append(k)
@@ -103,7 +111,24 @@ print("Resultado final", new_movements)
 
 salida.writelines("Estados\n")
 for i in list(new_movements.keys()):
-    salida.writelines(f'{i}\n')
+    init = False
+    end = False
+    string_init = '>'+i[1:-1]
+    
+
+    if string_init in estados:
+        salida.writelines(f'>{i}\n')
+        init = True
+    else:
+        new_arr = i[1:-1].split(',')
+        for j in new_arr:
+            string_end = '*'+j
+            if string_end in estados:
+                salida.writelines(f'*{i}\n')
+                end = True
+    if init == False and end == False: 
+        salida.writelines(f'{i}\n')
+        
 salida.writelines("Alfabeto\n")
 for i in alfabeto:
     salida.writelines(f'{i}\n')

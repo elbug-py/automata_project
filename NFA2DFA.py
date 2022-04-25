@@ -14,16 +14,12 @@ alfabeto = []
 for i in datos:
 
     if datos.index(i) > datos.index("Estados") and datos.index(i) < datos.index("Alfabeto"):
-        if len(i) == 1:
-            movements[i] = {}
+        if i[0] == '*' or i[0] == '>':
+            movements[i[1:]] = {}
             estados.append(i)
         else:
-            if i[1] == ' ':
-                movements[i[2:]] = {}
-                estados.append(i)
-            else:
-                movements[i[1:]] = {} #Para casos donde el alfabeto sea del tipo q0,q1,q2 
-                estados.append(i)
+            movements[i] = {} #Para casos donde el alfabeto sea del tipo q0,q1,q2 
+            estados.append(i)
 
     elif datos.index(i) > datos.index("Alfabeto") and datos.index(i) < datos.index("Transiciones"):
         alfabeto.append(i)

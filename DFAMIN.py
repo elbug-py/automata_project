@@ -1,4 +1,6 @@
 #--------INICIALIZAR ARCHIVOS-----------------#
+
+
 archivo = open("C:/Users/romer/Desktop/Python/automatas/dfa_input.txt", "r")
 salida = open("C:/Users/romer/Desktop/Python/automatas/salida_min.txt", "w")
 
@@ -123,7 +125,56 @@ for left in no_marcados:
     str_dic = '{'+ ','.join(str(letter) for letter in left) + '}'
     new_movements[str_dic] = {}
 
-print(new_movements)
+#print("NEW TRANSITIONS",new_movements)
+
+movement_guide = {}
+
+for i in list(new_movements.keys()):
+    keys = i[1:-1].split(',')
+    for k in keys: 
+        movement_guide[k] = '{'+ ','.join(str(letter) for letter in keys) + '}'
+
+#print("GUIDE",movement_guide)
+
+for i in new_movements.keys():
+    key = i[1:-1].split(',')[0]
+    new_movements[i]['0'] = movement_guide[movements[key]['0'][0]]
+    new_movements[i]['1'] = movement_guide[movements[key]['1'][0]]
+
+print("Transiciones Minimizado",new_movements)
+
+#--------------ARCHIVO DE SALIDA--------------#
+print("Resultado final", new_movements)
+
+salida.writelines("Estados\n")
+for i in list(new_movements.keys()):
+    init = False
+    end = False
+    string_init = '>'+i[1:-1]
+    
+
+    if string_init in estados:
+        salida.writelines(f'>{i}\n')
+        init = True
+    else:
+        new_arr = i[1:-1].split(',')
+        for j in new_arr:
+            string_end = '*'+j
+            if string_end in estados:
+                salida.writelines(f'*{i}\n')
+                end = True
+                break
+    if init == False and end == False: 
+        salida.writelines(f'{i}\n')
+        
+salida.writelines("Alfabeto\n")
+for i in alfabeto:
+    salida.writelines(f'{i}\n')
+salida.writelines("Transiciones\n")
+for i in new_movements:
+    for j in alfabeto:
+        string = new_movements[i][j]
+        salida.writelines(f'{i} {j} ->  {string}\n')
 
 salida.close()
 archivo.close()
